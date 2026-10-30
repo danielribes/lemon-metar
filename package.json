@@ -1,0 +1,25 @@
+{
+  "name": "lemon-metar",
+  "version": "0.1.0",
+  "description": "METAR/SPECI parser that returns JSON and a multilingual text description of each element",
+  "type": "module",
+  "exports": "./src/index.js",
+  "files": [
+    "src"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=95 --test-coverage-branches=90 \"test/**/*.test.js\""
+  },
+  "keywords": [
+    "metar",
+    "speci",
+    "aviation",
+    "weather",
+    "parser"
+  ],
+  "license": "MIT"
+}
