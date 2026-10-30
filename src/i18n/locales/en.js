@@ -67,7 +67,8 @@ export const en = {
   wind: {
     calm: 'Calm wind.',
     notAvailable: 'Wind not available.',
-    speed: (speed, gust) => (gust === null ? `${speed} kt` : `${speed} kt, gusting to ${gust} kt`),
+    speed: (speed, gust, unit) =>
+      (gust === null ? `${speed} ${unit}` : `${speed} ${unit}, gusting to ${gust} ${unit}`),
     variable: (speed) => `Variable wind at ${speed}.`,
     directed: (direction, speed) => `Wind from ${direction}° at ${speed}.`,
     directionNotAvailable: (speed) => `Wind at ${speed}, direction not available.`,
@@ -93,6 +94,7 @@ export const en = {
   },
   weather: {
     notObserved: 'Present weather not observed.',
+    recentNotObserved: 'Recent weather not observed.',
     phrase({ intensity, proximity, descriptor, phenomena }) {
       const names = joinList(phenomena.map((code) => PHENOMENA[code]), 'and');
       const core = descriptor ? DESCRIPTORS[descriptor](names) : names;

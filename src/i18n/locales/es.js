@@ -76,7 +76,8 @@ export const es = {
   wind: {
     calm: 'Viento en calma.',
     notAvailable: 'Viento no disponible.',
-    speed: (speed, gust) => (gust === null ? `${speed} kt` : `${speed} kt con rachas de ${gust} kt`),
+    speed: (speed, gust, unit) =>
+      (gust === null ? `${speed} ${unit}` : `${speed} ${unit} con rachas de ${gust} ${unit}`),
     variable: (speed) => `Viento variable de ${speed}.`,
     directed: (direction, speed) => `Viento de ${direction}° a ${speed}.`,
     directionNotAvailable: (speed) => `Viento de ${speed}, dirección no disponible.`,
@@ -102,6 +103,7 @@ export const es = {
   },
   weather: {
     notObserved: 'Tiempo presente no observado.',
+    recentNotObserved: 'Tiempo reciente no observado.',
     phrase: (parts) => composeWeather(GRAMMAR, parts),
   },
   recentWeather: (phrase) => `Tiempo reciente: ${phrase}.`,

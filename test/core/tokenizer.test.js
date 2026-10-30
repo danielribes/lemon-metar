@@ -25,6 +25,10 @@ test('TOK-05: rejects non-string and empty input', () => {
   }
 });
 
+test('TOK-07: removes control characters', () => {
+  assert.deepEqual(tokenize('LEAM 141200Z NIL\n\0\0\0'), ['LEAM', '141200Z', 'NIL']);
+});
+
 test('a lone terminator has no tokens', () => {
   assert.deepEqual(tokenize('='), []);
 });

@@ -26,7 +26,7 @@ const parseLayer = ({ 0: raw, groups }) => ({
 const skyOf = (kind, fields = {}) => ({ kind, layers: [], verticalVisibilityFt: null, ...fields });
 
 const isBlank = ({ amount, heightFt, cloudType }) =>
-  amount === null && heightFt === null && cloudType === null;
+  amount === null && heightFt === null && (cloudType === null || cloudType === 'unknown');
 
 function parseLayers(stream, context) {
   const layers = [];

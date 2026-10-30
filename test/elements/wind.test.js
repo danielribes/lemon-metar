@@ -53,8 +53,34 @@ test('WIND-08: accepts three-digit speeds and gusts', () => {
   assert.equal(data.gust, 130);
 });
 
+test('WIND-09: reads metres per second, unconverted', () => {
+  const { data } = run(wind, '03005MPS');
+  assert.equal(data.direction, 30);
+  assert.equal(data.speed, 5);
+  assert.equal(data.unit, 'mps');
+  assert.equal(run(wind, 'VRB02MPS').data.variable, true);
+  assert.equal(run(wind, '00000MPS').data.calm, true);
+  assert.equal(run(wind, '/////MPS').data.speed, null);
+});
+
+test('WIND-05: the gust margin in metres per second is 5', () => {
+  assert.deepEqual(run(wind, '21005G10MPS').warnings, []);
+  assert.deepEqual(run(wind, '21005G09MPS').warnings, [{ code: 'wind.gust-too-low', token: '21005G09MPS' }]);
+});
+
+test('WIND-09: texts use the reported unit', () => {
+  const texts = (token) => describeAll(wind, run(wind, token).data);
+
+  assert.deepEqual(texts('21005G10MPS'), {
+    en: 'Wind from 210° at 5 m/s, gusting to 10 m/s.',
+    ca: 'Vent de 210° a 5 m/s amb ratxes de 10 m/s.',
+    es: 'Viento de 210° a 5 m/s con rachas de 10 m/s.',
+  });
+  assert.equal(texts('VRB02MPS').ca, 'Vent variable de 2 m/s.');
+});
+
 test('rejects tokens that are not wind', () => {
-  for (const token of ['21010', 'VRB2KT', '2101KT', '21009MPS']) {
+  for (const token of ['21010', 'VRB2KT', '2101KT', '21009KMH']) {
     assert.equal(run(wind, token).data, null);
   }
 });

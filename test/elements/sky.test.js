@@ -76,6 +76,10 @@ test('SKY-11: ////// is a sensor fault', () => {
   assert.equal(texts('//////').en, 'Cloud sensor out of order.');
 });
 
+test('SKY-11: ///////// is a sensor fault too, and implies no convective cloud', () => {
+  assert.equal(parsed('/////////').kind, 'sensorFault');
+});
+
 test('layers with unknown amount or height', () => {
   assert.equal(parsed('///015').layers[0].amount, null);
   assert.equal(parsed('BKN///').layers[0].heightFt, null);

@@ -1,6 +1,7 @@
 import { WEATHER_GROUP, splitPhenomena } from './weather-codes.js';
 
-const PATTERN = new RegExp(`^RE(?!$)${WEATHER_GROUP}$`);
+const PATTERN = new RegExp(`^RE(?!$)(?:\\/\\/|${WEATHER_GROUP})$`);
+const NOT_OBSERVED = 'RE//';
 const MAX_GROUPS = 3;
 
 export const recentWeather = {
@@ -13,7 +14,8 @@ export const recentWeather = {
       groups.push({
         raw: match[0],
         descriptor: match.groups.descriptor ?? null,
-        phenomena: splitPhenomena(match.groups.phenomena),
+        phenomena: splitPhenomena(match.groups.phenomena ?? ''),
+        notObserved: match[0] === NOT_OBSERVED,
       });
     }
 
@@ -24,7 +26,9 @@ export const recentWeather = {
     return groups.length > 0 ? groups : null;
   },
 
-  describe({ descriptor, phenomena }, locale) {
+  describe({ descriptor, phenomena, notObserved }, locale) {
+    if (notObserved) return locale.weather.recentNotObserved;
+
     const phrase = locale.weather.phrase({ intensity: null, proximity: false, descriptor, phenomena });
     return locale.recentWeather(phrase);
   },

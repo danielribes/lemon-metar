@@ -76,7 +76,8 @@ export const ca = {
   wind: {
     calm: 'Vent en calma.',
     notAvailable: 'Vent no disponible.',
-    speed: (speed, gust) => (gust === null ? `${speed} kt` : `${speed} kt amb ratxes de ${gust} kt`),
+    speed: (speed, gust, unit) =>
+      (gust === null ? `${speed} ${unit}` : `${speed} ${unit} amb ratxes de ${gust} ${unit}`),
     variable: (speed) => `Vent variable de ${speed}.`,
     directed: (direction, speed) => `Vent de ${direction}° a ${speed}.`,
     directionNotAvailable: (speed) => `Vent de ${speed}, direcció no disponible.`,
@@ -102,6 +103,7 @@ export const ca = {
   },
   weather: {
     notObserved: 'Temps present no observat.',
+    recentNotObserved: 'Temps recent no observat.',
     phrase: (parts) => composeWeather(GRAMMAR, parts),
   },
   recentWeather: (phrase) => `Temps recent: ${phrase}.`,

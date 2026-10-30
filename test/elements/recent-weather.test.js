@@ -6,7 +6,7 @@ import { describeAll, run } from '../helpers.js';
 const first = (token) => run(recentWeather, token).data[0];
 
 test('RE-01: reads a recent phenomenon', () => {
-  assert.deepEqual(first('RERA'), { raw: 'RERA', descriptor: null, phenomena: ['RA'] });
+  assert.deepEqual(first('RERA'), { raw: 'RERA', descriptor: null, phenomena: ['RA'], notObserved: false });
   assert.deepEqual(describeAll(recentWeather, first('RERA')), {
     en: 'Recent weather: rain.',
     ca: 'Temps recent: pluja.',
@@ -33,6 +33,15 @@ test('RE-04: reads every form the guide lists', () => {
   for (const token of forms.split(/\s+/)) {
     assert.notEqual(run(recentWeather, token).data, null, token);
   }
+});
+
+test('RE-05: RE// means not observed', () => {
+  assert.deepEqual(first('RE//'), { raw: 'RE//', descriptor: null, phenomena: [], notObserved: true });
+  assert.deepEqual(describeAll(recentWeather, first('RE//')), {
+    en: 'Recent weather not observed.',
+    ca: 'Temps recent no observat.',
+    es: 'Tiempo reciente no observado.',
+  });
 });
 
 test('stops at the first other token', () => {

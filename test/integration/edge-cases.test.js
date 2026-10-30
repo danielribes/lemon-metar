@@ -70,6 +70,19 @@ test('EDGE-8: lower case input', () => {
   assert.deepEqual({ ...lower, raw: '' }, { ...upper, raw: '' });
 });
 
+test('WIND-09: real report with wind in metres per second', () => {
+  const report = parseMetar('UAAH 301400Z 03005MPS CAVOK 06/M03 Q1030 NOSIG RMK QFE734/0979', { locale: 'ca' });
+  assert.deepEqual(report.unparsed, []);
+  assert.equal(report.wind.unit, 'mps');
+  assert.equal(report.wind.description, 'Vent de 30° a 5 m/s.');
+});
+
+test('WIND-09: the trend reuses metres per second', () => {
+  const report = decodeMetar('UAAH 301400Z 03005MPS CAVOK 06/M03 Q1030 TEMPO 09012G18MPS');
+  assert.equal(report.trend[0].wind.unit, 'mps');
+  assert.deepEqual(report.warnings, []);
+});
+
 test('US format tokens land in unparsed', () => {
   const report = decodeMetar('KJFK 141200Z 21010KT 10SM CLR 20/10 A2992');
   assert.deepEqual(report.unparsed, ['10SM', 'CLR', 'A2992']);

@@ -55,6 +55,7 @@ minimum visibility if a prevailing visibility has already been read (see `MVIS-0
 | TOK-04 | Normalise the en dash and minus sign (`–`, `−`) to `-`. PDF example 6 prints `–UP`. | [p.22] |
 | TOK-05 | Empty or non-string input throws `TypeError`. It is the only case that throws. | [EXT] |
 | TOK-06 | `raw` in the output keeps the input as received, trimmed. | [EXT] |
+| TOK-07 | Control characters are removed. Real feeds can end in NUL bytes. | [EXT] |
 
 Some groups span several tokens (`WS R17`, `WS ALL RWY`, `BECMG FM1100 7000`), so
 elements consume from a token stream rather than receiving a single token.
@@ -114,7 +115,7 @@ Output: `auto: {} | null`.
 
 ### WIND: surface wind
 
-`^(?<dir>\d{3}|VRB|///)(?<speed>\d{2,3}|//)(?:G(?<gust>\d{2,3}))?KT$`
+`^(?<dir>\d{3}|VRB|///)(?<speed>\d{2,3}|//)(?:G(?<gust>\d{2,3}))?(?<unit>KT|MPS)$`
 
 | ID | Rule | Source |
 |---|---|---|
@@ -122,12 +123,13 @@ Output: `auto: {} | null`.
 | WIND-02 | `VRB` is variable: ff < 3 kt and variation ≥ 60°, or ff ≥ 3 kt and variation ≥ 180°, or undetermined direction. | [p.13] |
 | WIND-03 | `ff` is the mean speed over the preceding 10 minutes, in knots. | [p.13] |
 | WIND-04 | `G` + `fmfm` is the maximum gust over the same period. | [p.13] |
-| WIND-05 | A gust must satisfy `gust ≥ speed + 10`. Otherwise warning `wind.gust-too-low`. | [p.13] |
+| WIND-05 | A gust must satisfy `gust ≥ speed + 10` in knots, or `gust ≥ speed + 5` in metres per second. Otherwise warning `wind.gust-too-low`. | [p.13] |
 | WIND-06 | Unobservable parts use solidi (`/////KT`, `210//KT`): value `null`. | [p.18] |
 | WIND-07 | `00000KT` is calm: `calm: true`, direction 0, speed 0. | [EXT] |
 | WIND-08 | Three-digit speeds and gusts are accepted. | [EXT] |
+| WIND-09 | Speed may be in metres per second (`03005MPS`). Values are kept in the reported unit, not converted. | [EXT] |
 
-Output: `wind: { direction, variable, speed, gust, calm, unit: "kt" }`.
+Output: `wind: { direction, variable, speed, gust, calm, unit: "kt"|"mps" }`.
 `direction` is `null` when `VRB` or `///`.
 
 ### WVAR: wind direction variation
@@ -231,7 +233,7 @@ Output: `weather: [{ intensity: "light"|"moderate"|"heavy"|null, proximity: bool
 | SKY-08 | `NCD`: no clouds detected (automatic systems). | [p.17, p.18] |
 | SKY-09 | `SCT023///`: convective cloud exists, but cannot be tied to this layer. `cloudType: "unknown"`. | [p.17, p.18] |
 | SKY-10 | `///CB`, `///TCU`: convective cloud with unknown amount and height. | [p.17, p.18] |
-| SKY-11 | `//////`: cloud sensor out of order. `sensorFault: true`. | [p.18] |
+| SKY-11 | `//////`: cloud sensor out of order. `/////////` is the same, as amount, height and type are all unknown and no convective cloud is implied. `kind: "sensorFault"`. | [p.18] |
 
 Output: `sky: { kind: "layers"|"verticalVisibility"|"nsc"|"ncd"|"sensorFault", layers: [{ amount, heightFt, cloudType }], verticalVisibilityFt }`.
 
@@ -269,8 +271,9 @@ Output: `pressure: { qnh, unit: "hPa" }`.
 | RE-02 | Never carries intensity. `RE+RA` goes to `unparsed`. | [p.15] |
 | RE-03 | Up to 3 groups. More: warning `recentWeather.too-many-groups`. | [p.15] |
 | RE-04 | Known forms: `REFZDZ REFZRA REDZ RESG RERA RESN RESHRA RESHSN RERASN RESHGR RESHGS REPL REBLSN REDS RESS RETS RETSRA RETSSN RETSGR RETSGS REFC REVA REUP REFZUP RETSUP`. Others still parse, as the list is descriptive. | [p.15, p.18] |
+| RE-05 | `RE//` means recent weather not observed: `notObserved: true`. | [p.18] |
 
-Output: `recentWeather: [{ descriptor, phenomena: [] }]`.
+Output: `recentWeather: [{ descriptor, phenomena: [], notObserved: boolean }]`.
 
 ### WS: wind shear
 
@@ -447,6 +450,7 @@ Everything tagged `[EXT]`:
 | Type word optional | The project's reference example omits it |
 | `00000KT` calm | Very common; the PDF does not describe it |
 | Three-digit wind speed | Hurricane-force reports |
+| `MPS` wind | ICAO format, used in about 4% of a real sample. Without it the whole wind group is lost |
 | `NDV` suffix | Common on European AUTO reports |
 | RVR `V` variation | Allowed by ICAO; absent from the PDF |
 | Several trend groups | The PDF's diagram shows one; real reports have more |
@@ -454,7 +458,7 @@ Everything tagged `[EXT]`:
 
 ### Out of scope, sent to `unparsed`
 
-- US and other national formats: `SM` visibility, `A2992` altimeter, `SKC`, `CLR`, `MPS`.
+- US and other national formats: `SM` visibility, `A2992` altimeter, `SKC`, `CLR`.
 - Runway state and sea state groups.
 - TAF (PDF pages 24 onward).
 - Decoding of `RMK`.
