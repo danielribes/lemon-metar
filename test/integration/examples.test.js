@@ -1,17 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { decodeMetar, parseMetar } from '../../src/index.js';
-
-const EX_1 = 'METAR COR LEAM 141200Z 21009KT 6000 NSC 24/10 Q1008=';
-const EX_2 = 'METAR LEZL 150800Z 06003KT 350V100 6000 2000E R27/0900U PRFG OVC009 13/13 Q1022 NOSIG=';
-const EX_3 = 'METAR    LEBB  160930Z   03008KT    3000   TSGRRA   SCT015TCU   BKN022CB   09/06   Q0993  NOSIG=';
-const EX_4 = `METAR   LEST   201230Z   21010G25KT   180V250   2000   1200   R17/1300U   R35/P2000   +SHRA   FEW010CB
-SCT017   BKN027   12/07   Q1002   RETS   WS R17   BECMG   7000   NSW   NSC=`;
-const EX_5 = `SPECI   LEPP   050820Z   21015KT   1000   R15/0400U   R33/0600U   +SHSN   FEW015   BKN025CB
-M03/M04   Q1000=`;
-const EX_6 = 'METAR LEPP 230200Z AUTO 10002KT 3700 0800NW R33/1800U R15/P2000 –UP BCFG SCT003 BKN008 OVC014 01/01 Q1006=';
-const EX_7 = 'METAR LEBG 022230Z AUTO 21017KT 9999 VCTS SCT023/// BKN029/// BKN050/// ///CB 06/05 Q0991=';
-const REFERENCE = 'LELL 282230Z AUTO VRB02KT CAVOK 15/09 Q1017';
+import { EX_1, EX_2, EX_3, EX_4, EX_5, EX_6, EX_7, REFERENCE } from '../fixtures/reports.js';
 
 const layers = (report) => report.sky.layers.map((layer) => [layer.amount, layer.heightFt, layer.cloudType]);
 

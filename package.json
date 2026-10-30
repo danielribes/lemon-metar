@@ -1,18 +1,21 @@
 {
   "name": "lemon-metar",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "METAR/SPECI parser that returns JSON and a multilingual text description of each element",
   "type": "module",
-  "exports": "./src/index.js",
+  "exports": "./dist/lemon-metar.min.js",
   "files": [
-    "src"
+    "dist"
   ],
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "test": "node --test \"test/**/*.test.js\"",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=95 --test-coverage-branches=90 \"test/**/*.test.js\""
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=95 --test-coverage-branches=90 \"test/**/*.test.js\"",
+    "test:dist": "node --test \"test-dist/**/*.test.js\"",
+    "build": "esbuild src/index.js --bundle --minify --format=esm --target=es2022 --sourcemap --outfile=dist/lemon-metar.min.js",
+    "verify": "npm run test:coverage && npm run build && npm run test:dist"
   },
   "keywords": [
     "metar",
@@ -21,5 +24,8 @@
     "weather",
     "parser"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
 }

@@ -12,8 +12,9 @@ full text summary, in English, Catalan and Spanish.
 
 | Topic | Decision |
 |---|---|
-| Runtime | Modern JavaScript, native ES modules, no build step. Code must run as is on Node 22 |
-| Dependencies | None. Tests use `node:test` and `node:assert` |
+| Runtime | Modern JavaScript, native ES modules. `src/` must run as is on Node 22, with no build step during development |
+| Dependencies | None at runtime. Tests use `node:test` and `node:assert`. `esbuild` is a development dependency, for the production file only |
+| Distribution | `dist/lemon-metar.min.js`, committed to the repository. No npm package for now |
 | Report type word | Optional, defaults to `METAR`, as in the reference example |
 | Summary wording | "Observation" rather than "forecast", as a METAR is an observation and only TREND is a forecast. "Núvol" for cloud, "punt de rosada" for dew point |
 | Non-European formats | Out of scope. US formats (`SM`, `A2992`, `CLR`) are not supported for now and land in `unparsed` |

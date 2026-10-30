@@ -17,8 +17,10 @@ with a human-readable description of every element in several languages.
 
 ## Tech
 
-- Modern JavaScript (ES2026 target), native ES modules, no build step, no transpiler.
+- Modern JavaScript (ES2026 target), native ES modules. `src/` runs as is, with no
+  build step or transpiler during development.
 - No runtime dependencies. Tests use the built-in `node:test` and `node:assert`.
+  `esbuild` is the only development dependency, and is used only by `npm run build`.
 - `src/` must stay runtime-agnostic: no `node:` imports, so it also works in browsers.
 - Only use features the current Node runs natively. On Node 22 (V8 12.4) these are
   not available: duplicate named regex groups, `RegExp.escape`, regex modifiers,
@@ -52,7 +54,9 @@ src/
     romance.js          Shared phrase composition for Catalan and Spanish
     locales/            en.js  ca.js  es.js
 test/
-  core/  elements/  i18n/  integration/
+  core/  elements/  i18n/  integration/  fixtures/
+test-dist/              Checks the production file against src/
+dist/                   Generated production file
 ```
 
 Design rules:
@@ -125,12 +129,24 @@ locale-free data, and `describeMetar` adds the texts.
   checked per locale.
 - Coverage goal: at least 95% of lines and 90% of branches.
 
-Commands, once `package.json` exists:
+Commands:
 
 ```bash
-npm test                 # node --test "test/**/*.test.js"
-npm run test:coverage    # adds --experimental-test-coverage
+npm test                 # Tests over src/
+npm run test:coverage    # Same, with coverage thresholds
+npm run build            # Generates dist/lemon-metar.min.js
+npm run test:dist        # Checks dist/ gives the same results as src/
+npm run verify           # All of the above, in order
 ```
+
+## Production build
+
+- `dist/lemon-metar.min.js` is the production file: one minified ES module.
+- It is generated from `src/`. Never edit `dist/`.
+- `dist/` is committed, as it is how consumers get the library. There is no npm
+  package yet.
+- Any change to `src/` must be followed by `npm run verify` before committing, so
+  `dist/` stays in sync. `npm test` does not touch `dist/`.
 
 ## Scope
 

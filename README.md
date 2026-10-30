@@ -3,7 +3,24 @@
 JavaScript library that parses METAR and SPECI aviation weather reports into JSON,
 with a description of each element in English, Catalan or Spanish.
 
-It has no dependencies and no build step. It runs on Node 22 or later and in browsers.
+It has no runtime dependencies. It runs on Node 22 or later and in browsers.
+
+## Install
+
+The production file is `dist/lemon-metar.min.js`, a single minified ES module. Copy it
+into your project, or load it from a CDN:
+
+```html
+<script type="module">
+  import { parseMetar } from 'https://cdn.jsdelivr.net/gh/danielribes/lemon-metar@v0.2.0/dist/lemon-metar.min.js';
+</script>
+```
+
+With npm, install it from GitHub, as it is not on the npm registry:
+
+```bash
+npm install github:danielribes/lemon-metar#v0.2.0
+```
 
 ## Usage
 
@@ -72,10 +89,19 @@ airport name is not resolved yet, so the result has the ICAO code only. US forma
 
 ## Development
 
+`src/` runs as is, so development needs no build.
+
 ```bash
-npm test
-npm run test:coverage
+npm install
+npm test                 # Tests over src/
+npm run test:coverage    # Same, with coverage thresholds
+npm run build            # Generates dist/lemon-metar.min.js
+npm run test:dist        # Checks dist/ gives the same results as src/
+npm run verify           # All of the above, in order
 ```
+
+Run `npm run verify` before committing a change to `src/`, so `dist/` stays in sync.
+Never edit `dist/` by hand.
 
 - `docs/metar-spec.md`: parsing rules and test vectors.
 - `docs/plan.md`: action plan.
