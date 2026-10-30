@@ -12,14 +12,14 @@ into your project, or load it from a CDN:
 
 ```html
 <script type="module">
-  import { parseMetar } from 'https://cdn.jsdelivr.net/gh/danielribes/lemon-metar@v0.2.0/dist/lemon-metar.min.js';
+  import { parseMetar } from 'https://cdn.jsdelivr.net/gh/danielribes/lemon-metar@v0.3.0/dist/lemon-metar.min.js';
 </script>
 ```
 
 With npm, install it from GitHub, as it is not on the npm registry:
 
 ```bash
-npm install github:danielribes/lemon-metar#v0.2.0
+npm install github:danielribes/lemon-metar#v0.3.0
 ```
 
 ## Usage
@@ -42,13 +42,36 @@ Temperatura de 15 °C, punt de rosada a 9 °C.
 QNH 1017 hPa.
 ```
 
+## Airport names
+
+Names are an optional module, as they are ten times the size of the library:
+
+```js
+import { parseMetar } from 'lemon-metar';
+import { airports } from 'lemon-metar/airports';
+
+const report = parseMetar('LELL 282230Z AUTO VRB02KT CAVOK 15/09 Q1017', { locale: 'ca', airports });
+
+report.station.name;         // 'Aeroport de Sabadell'
+report.station.description;  // "Observació a l'Aeroport de Sabadell (LELL)."
+```
+
+From a CDN, load `dist/airports.min.js` the same way as the main file.
+
+Airports of Spain have names in Catalan and Spanish. Everywhere else, and in English,
+the name comes as the source gives it, such as `Sabadell Airfield`. A code with no
+known name shows the code alone.
+
+Names come from [OurAirports](https://ourairports.com/data/), which is public domain.
+To update them, run `npm run airports`, then `npm run verify`.
+
 ## API
 
 | Function | Result |
 |---|---|
-| `parseMetar(input, { locale })` | Report data with descriptions and a summary |
+| `parseMetar(input, { locale, airports })` | Report data with descriptions and a summary |
 | `decodeMetar(input)` | Report data with no text |
-| `describeMetar(decoded, { locale })` | Adds the texts to a decoded report, so changing language needs no new parsing |
+| `describeMetar(decoded, { locale, airports })` | Adds the texts to a decoded report, so changing language needs no new parsing |
 
 `SUPPORTED_LOCALES` lists the languages (`en`, `ca`, `es`) and `DEFAULT_LOCALE` is `en`.
 An unknown locale falls back to English. The `locale` field of the result shows the one
@@ -83,9 +106,10 @@ never throws: unknown tokens go to `unparsed`, and broken rules go to `warnings`
 
 ## Scope
 
-Reports follow the ICAO format as described in the AEMET guide in `reference/`. The
-airport name is not resolved yet, so the result has the ICAO code only. US formats
-(`10SM`, `A2992`, `CLR`), TAF and `RMK` decoding are not supported.
+Reports follow the ICAO format as described in the
+[AEMET aeronautical guide](https://www.aemet.es/en/conocermas/aeronautica/detalles/Guia_MET),
+which `docs/metar-spec.md` is based on. US formats (`10SM`, `A2992`, `CLR`), TAF and
+`RMK` decoding are not supported.
 
 ## Development
 

@@ -60,15 +60,18 @@ const TENDENCIES = { up: 'en augment', down: 'en disminució', none: 'sense canv
 /** Article plus time: "la 01:30", "les 22:30". */
 const hourOf = (clock) => (clock.startsWith('01:') ? `la ${clock}` : `les ${clock}`);
 
+/** Preposition and article for a translated airport name. */
+const atNamedPlace = (place) => (place.startsWith('Base') ? `a la ${place}` : `a l'${place}`);
+
 export const ca = {
   reportType: {
     METAR: 'Informe meteorològic ordinari (METAR).',
     SPECI: 'Informe meteorològic especial (SPECI).',
     corrected: 'Informe corregit.',
   },
-  station({ icao, special, corrected }) {
+  station({ place, translated, special, corrected }) {
     const words = ['Observació', special && 'especial', corrected && 'corregida'];
-    return `${words.filter(Boolean).join(' ')} a ${icao}.`;
+    return `${words.filter(Boolean).join(' ')} ${translated ? atNamedPlace(place) : `a ${place}`}.`;
   },
   time: ({ day, clock }) => `Dia ${day} a ${hourOf(clock)} UTC.`,
   nil: 'Informe no disponible.',

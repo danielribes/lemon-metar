@@ -6,8 +6,9 @@ export const station = {
     return match && { icao: match[0] };
   },
 
-  describe({ icao }, locale, report) {
+  describe({ icao, name, translated }, locale, report) {
     const { type, corrected } = report.reportType;
-    return locale.station({ icao, special: type === 'SPECI', corrected });
+    const place = name ? `${name} (${icao})` : icao;
+    return locale.station({ place, translated, special: type === 'SPECI', corrected });
   },
 };

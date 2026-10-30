@@ -24,6 +24,25 @@ test('STN-02: reports the code, not an airport name', () => {
   });
 });
 
+test('STN-04: a known name goes with its code, untranslated', () => {
+  const data = { icao: 'LELL', name: 'Sabadell Airfield' };
+  assert.deepEqual(describeAll(station, data, report('METAR', false)), {
+    en: 'Observation at Sabadell Airfield (LELL).',
+    ca: 'Observació a Sabadell Airfield (LELL).',
+    es: 'Observación en Sabadell Airfield (LELL).',
+  });
+});
+
+test('STN-06: translated names take their article', () => {
+  const texts = (name) => describeAll(station, { icao: 'LELL', name, translated: true }, report('METAR', false));
+
+  assert.equal(texts('Aeroport de Sabadell').ca, "Observació a l'Aeroport de Sabadell (LELL).");
+  assert.equal(texts('Aeropuerto de Sabadell').es, 'Observación en el Aeropuerto de Sabadell (LELL).');
+  assert.equal(texts('Base Aèria de Getafe').ca, 'Observació a la Base Aèria de Getafe (LELL).');
+  assert.equal(texts('Base Aérea de Getafe').es, 'Observación en la Base Aérea de Getafe (LELL).');
+  assert.equal(texts('Heliport de Ceuta').ca, "Observació a l'Heliport de Ceuta (LELL).");
+});
+
 test('the text reflects special and corrected reports', () => {
   assert.deepEqual(describeAll(station, { icao: 'LEPP' }, report('SPECI', false)), {
     en: 'Special observation at LEPP.',

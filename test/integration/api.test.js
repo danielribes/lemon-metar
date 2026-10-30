@@ -34,6 +34,53 @@ test('describeMetar does not change the decoded report', () => {
   assert.deepEqual(decoded, snapshot);
 });
 
+test('STN-03: airports gives the name of the station', () => {
+  const report = parseMetar(REPORT, { locale: 'ca', airports: { names: { LELL: 'Sabadell Airfield' } } });
+  assert.equal(report.station.name, 'Sabadell Airfield');
+  assert.equal(report.station.translated, false);
+  assert.equal(report.station.icao, 'LELL');
+  assert.equal(report.station.description, 'Observació a Sabadell Airfield (LELL).');
+  assert.match(report.summary, /^Observació a Sabadell Airfield \(LELL\)\. Dia 28/);
+});
+
+test('STN-03: an unknown code has no name and shows the code', () => {
+  const report = parseMetar(REPORT, { airports: { names: { LEBL: 'Barcelona' } } });
+  assert.equal(report.station.name, null);
+  assert.equal(report.station.description, 'Observation at LELL.');
+});
+
+test('STN-05: a translation takes priority for its language only', () => {
+  const airports = {
+    names: { LELL: 'Sabadell Airfield' },
+    translations: { LELL: { ca: 'Aeroport de Sabadell', es: 'Aeropuerto de Sabadell' } },
+  };
+
+  const catalan = parseMetar(REPORT, { locale: 'ca-ES', airports }).station;
+  assert.equal(catalan.name, 'Aeroport de Sabadell');
+  assert.equal(catalan.translated, true);
+  assert.equal(catalan.description, "Observació a l'Aeroport de Sabadell (LELL).");
+
+  const english = parseMetar(REPORT, { locale: 'en', airports }).station;
+  assert.equal(english.name, 'Sabadell Airfield');
+  assert.equal(english.translated, false);
+});
+
+test('STN-02: without airports the text shows the code', () => {
+  const report = parseMetar(REPORT);
+  assert.equal(report.station.name, null);
+  assert.equal(report.station.description, 'Observation at LELL.');
+});
+
+test('decodeMetar has no airport name, and describeMetar can add it', () => {
+  const decoded = decodeMetar(REPORT);
+  assert.equal(decoded.station.name, undefined);
+  assert.equal(describeMetar(decoded, { airports: { names: { LELL: 'Sabadell' } } }).station.name, 'Sabadell');
+});
+
+test('airports is harmless on a report with no station', () => {
+  assert.equal(parseMetar('141200Z 21010KT', { airports: {} }).station, null);
+});
+
 test('parseMetar uses the default locale', () => {
   const report = parseMetar(REPORT);
   assert.equal(report.locale, DEFAULT_LOCALE);

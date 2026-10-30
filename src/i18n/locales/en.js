@@ -56,10 +56,10 @@ export const en = {
     SPECI: 'Special meteorological report (SPECI).',
     corrected: 'Corrected report.',
   },
-  station({ icao, special, corrected }) {
+  station({ place, special, corrected }) {
     const words = [corrected && 'corrected', special && 'special'].filter(Boolean).join(' ');
     const noun = words ? `${words} observation` : 'observation';
-    return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} at ${icao}.`;
+    return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} at ${place}.`;
   },
   time: ({ day, clock }) => `Day ${day} at ${clock} UTC.`,
   nil: 'Report missing.',

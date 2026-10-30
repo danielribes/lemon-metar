@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { airports as distAirports } from '../dist/airports.min.js';
 import * as dist from '../dist/lemon-metar.min.js';
+import { airports as srcAirports } from '../src/airports/index.js';
 import * as src from '../src/index.js';
-import { ALL_REPORTS } from '../test/fixtures/reports.js';
+import { ALL_REPORTS, REFERENCE } from '../test/fixtures/reports.js';
 
 test('dist exports the same API as src', () => {
   assert.deepEqual(Object.keys(dist).sort(), Object.keys(src).sort());
@@ -20,4 +22,13 @@ test('dist gives the same result as src in every language', () => {
 
 test('dist rejects invalid input as src does', () => {
   assert.throws(() => dist.parseMetar(''), TypeError);
+});
+
+test('dist airports match src and work with the parser', () => {
+  assert.deepEqual(distAirports, srcAirports);
+  const options = { locale: 'ca', airports: distAirports };
+  assert.deepEqual(
+    dist.parseMetar(REFERENCE, options).station,
+    src.parseMetar(REFERENCE, { locale: 'ca', airports: srcAirports }).station,
+  );
 });
