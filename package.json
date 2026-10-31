@@ -1,6 +1,6 @@
 {
   "name": "lemon-metar",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "METAR/SPECI parser that returns JSON and a multilingual text description of each element",
   "type": "module",
   "exports": {

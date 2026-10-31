@@ -12,14 +12,14 @@ into your project, or load it from a CDN:
 
 ```html
 <script type="module">
-  import { parseMetar } from 'https://cdn.jsdelivr.net/gh/danielribes/lemon-metar@v0.3.0/dist/lemon-metar.min.js';
+  import { parseMetar } from 'https://cdn.jsdelivr.net/gh/danielribes/lemon-metar@v0.3.1/dist/lemon-metar.min.js';
 </script>
 ```
 
 With npm, install it from GitHub, as it is not on the npm registry:
 
 ```bash
-npm install github:danielribes/lemon-metar#v0.3.0
+npm install github:danielribes/lemon-metar#v0.3.1
 ```
 
 ## Usage
