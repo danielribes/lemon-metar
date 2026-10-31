@@ -5,6 +5,20 @@ with a description of each element in English, Catalan or Spanish.
 
 It has no runtime dependencies. It runs on Node 22 or later and in browsers.
 
+> [!WARNING]
+> **Validate before relying on it.** METAR data can inform decisions that affect
+> safety. Do not use this library for flight planning, navigation or any other
+> operational purpose without exhaustive prior testing and validation for that use.
+>
+> The library follows the specifications in the
+> [AEMET aeronautical guide](https://www.aemet.es/en/conocermas/aeronautica/detalles/Guia_MET)
+> and has a test suite that validates each rule, but it can still decode or describe a
+> report incorrectly. It is not an official product, and it is not affiliated with or
+> endorsed by AEMET. Airport names and translations may also contain errors.
+>
+> Its use and results are the sole responsibility of whoever uses it. The original
+> report and official aeronautical weather sources remain the reference.
+
 ## Install
 
 The production file is `dist/lemon-metar.min.js`, a single minified ES module. Copy it
